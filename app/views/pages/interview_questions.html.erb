@@ -1,75 +1,60 @@
-<h1>Interview Questions</h1>
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Learning notes</p>
+      <h1>Interview Questions</h1>
+    </div>
+  </div>
 
-<div>
-  <h2>Q: How does Stimulus connect a JS file to an HTML element?</h2>
-  <p><strong>Answer:</strong> Stimulus derives an identifier from the controller's file name — <code>adjuster_controller.js</code> becomes <code>"adjuster"</code>. It scans the DOM for elements with <code>data-controller="adjuster"</code> and attaches an instance of that class to each match. If the name doesn't match (a typo, for example), Stimulus finds nothing and fails silently — no error, no console message.</p>
-</div>
+  <div class="info-stack">
+    <article class="info-card">
+      <h2>Q: How does Stimulus connect a JS file to an HTML element?</h2>
+      <p><strong>Answer:</strong> Stimulus derives an identifier from the controller's file name — <code>adjuster_controller.js</code> becomes <code>"adjuster"</code>. It scans the DOM for elements with <code>data-controller="adjuster"</code> and attaches an instance of that class to each match. If the name doesn't match (a typo, for example), Stimulus finds nothing and fails silently — no error, no console message.</p>
+    </article>
 
-<hr>
+    <article class="info-card">
+      <h2>Q: What's the difference between connect() and an action method in a Stimulus controller?</h2>
+      <p><strong>Answer:</strong> <code>connect()</code> runs automatically, once, the moment the controller's element enters the DOM — I never call it myself. Action methods like <code>add()</code> only run when an event I wired up via <code>data-action="click->adjuster#add"</code> actually fires. One is lifecycle, the other is event-driven.</p>
+    </article>
 
-<div>
-  <h2>Q: What's the difference between connect() and an action method in a Stimulus controller?</h2>
-  <p><strong>Answer:</strong> <code>connect()</code> runs automatically, once, the moment the controller's element enters the DOM — I never call it myself. Action methods like <code>add()</code> only run when an event I wired up via <code>data-action="click->adjuster#add"</code> actually fires. One is lifecycle, the other is event-driven.</p>
-</div>
+    <article class="info-card">
+      <h2>Q: Why did my button silently stop working when placed inside a &lt;table&gt;?</h2>
+      <p><strong>Answer:</strong> HTML tables only allow specific direct children (thead, tbody, tr, etc.). A &lt;button&gt; placed directly inside &lt;table&gt; gets silently relocated by the browser's parser to just before the table. That moved it outside my <code>data-controller</code> scope, so Stimulus never found it. Fixed by nesting it inside a &lt;tr&gt;&lt;td&gt;, which is valid.</p>
+    </article>
 
-<hr>
+    <article class="info-card">
+      <h2>Q: What's the difference between a Stimulus target (singular) and targets (plural)?</h2>
+      <p><strong>Answer:</strong> <code>this.quantityTarget</code> (singular) returns only the first matching element within that controller instance's scope — silently, no error if there are more. <code>this.quantityTargets</code> (plural) returns all matches as an array. This matters a lot with scope: if one controller manages multiple rows, singular access on a shared target can silently update the wrong row.</p>
+    </article>
 
-<div>
-  <h2>Q: Why did my button silently stop working when placed inside a &lt;table&gt;?</h2>
-  <p><strong>Answer:</strong> HTML tables only allow specific direct children (thead, tbody, tr, etc.). A &lt;button&gt; placed directly inside &lt;table&gt; gets silently relocated by the browser's parser to just before the table. That moved it outside my <code>data-controller</code> scope, so Stimulus never found it. Fixed by nesting it inside a &lt;tr&gt;&lt;td&gt;, which is valid.</p>
-</div>
+    <article class="info-card">
+      <h2>Q: What does "scope" mean for a Stimulus controller?</h2>
+      <p><strong>Answer:</strong> Scope is the DOM subtree under the element carrying <code>data-controller</code>. Targets and actions are only found within that subtree, not the whole page. Moving <code>data-controller</code> from a shared &lt;table&gt; to each individual &lt;tr&gt; gave every row its own private controller instance, so each button only ever affects its own row.</p>
+    </article>
 
-<hr>
+    <article class="info-card">
+      <h2>Q: Why should I use link_to and named route helpers instead of hardcoded href values?</h2>
+      <p><strong>Answer:</strong> A hardcoded <code>href="/about"</code> is just a string Rails knows nothing about. <code>about_path</code> is a method generated from the route's <code>as: "about"</code> — it always reflects the current route. If the URL changes later, every <code>link_to</code> using the helper updates automatically; hardcoded strings would silently 404.</p>
+    </article>
 
-<div>
-  <h2>Q: What's the difference between a Stimulus target (singular) and targets (plural)?</h2>
-  <p><strong>Answer:</strong> <code>this.quantityTarget</code> (singular) returns only the first matching element within that controller instance's scope — silently, no error if there are more. <code>this.quantityTargets</code> (plural) returns all matches as an array. This matters a lot with scope: if one controller manages multiple rows, singular access on a shared target can silently update the wrong row.</p>
-</div>
+    <article class="info-card">
+      <h2>Q: When is looping over data in a view actually worth it, versus just writing things out plainly?</h2>
+      <p><strong>Answer:</strong> Looping earns its complexity when a list's size or contents are decided by data that changes on its own — like inventory rows or warehouses from the database. A small, human-decided, rarely-changing list — like 3-5 navbar links — doesn't have that problem, so looping there just adds indirection without solving anything real. DRY is about avoiding drift and tedium at scale, not a rule to apply everywhere on principle.</p>
+    </article>
 
-<hr>
+    <article class="info-card">
+      <h2>Q: Why did my JSON request update the database correctly but the UI acted like it failed?</h2>
+      <p><strong>Answer:</strong> My controller action ended with <code>redirect_to inventories_path</code>, built for a full-page form submit. My <code>fetch()</code> call automatically followed that redirect, but the redirect target only supports GET, not PATCH, so the followed request 404'd. The database update had already succeeded before the redirect — the UI's failure reading was about the redirect chase, not the actual save. Fixed with <code>respond_to</code> in the controller, returning a plain <code>head :ok</code> for JSON requests instead of a redirect.</p>
+    </article>
 
-<div>
-  <h2>Q: What does "scope" mean for a Stimulus controller?</h2>
-  <p><strong>Answer:</strong> Scope is the DOM subtree under the element carrying <code>data-controller</code>. Targets and actions are only found within that subtree, not the whole page. Moving <code>data-controller</code> from a shared &lt;table&gt; to each individual &lt;tr&gt; gave every row its own private controller instance, so each button only ever affects its own row.</p>
-</div>
+    <article class="info-card">
+      <h2>Q: What's the difference between the Content-Type and Accept headers in a fetch request?</h2>
+      <p><strong>Answer:</strong> <code>Content-Type</code> describes the format of the data I'm sending in the request body. <code>Accept</code> tells the server what format I want back in the response. Rails' <code>respond_to</code> block reads <code>Accept</code> to decide whether to run the <code>format.html</code> or <code>format.json</code> branch — <code>Content-Type</code> alone doesn't affect that choice.</p>
+    </article>
 
-<hr>
-
-<div>
-  <h2>Q: Why should I use link_to and named route helpers instead of hardcoded href values?</h2>
-  <p><strong>Answer:</strong> A hardcoded <code>href="/about"</code> is just a string Rails knows nothing about. <code>about_path</code> is a method generated from the route's <code>as: "about"</code> — it always reflects the current route. If the URL changes later, every <code>link_to</code> using the helper updates automatically; hardcoded strings would silently 404.</p>
-</div>
-
-<hr>
-
-<div>
-  <h2>Q: When is looping over data in a view actually worth it, versus just writing things out plainly?</h2>
-  <p><strong>Answer:</strong> Looping earns its complexity when a list's size or contents are decided by data that changes on its own — like inventory rows or warehouses from the database. A small, human-decided, rarely-changing list — like 3-5 navbar links — doesn't have that problem, so looping there just adds indirection without solving anything real. DRY is about avoiding drift and tedium at scale, not a rule to apply everywhere on principle.</p>
-</div>
-
-<hr>
-
-<div>
-  <h2>Q: Why did my JSON request update the database correctly but the UI acted like it failed?</h2>
-  <p><strong>Answer:</strong> My controller action ended with <code>redirect_to inventories_path</code>, built for a full-page form submit. My <code>fetch()</code> call automatically followed that redirect, but the redirect target only supports GET, not PATCH, so the followed request 404'd. The database update had already succeeded before the redirect — the UI's failure reading was about the redirect chase, not the actual save. Fixed with <code>respond_to</code> in the controller, returning a plain <code>head :ok</code> for JSON requests instead of a redirect.</p>
-</div>
-
-<hr>
-
-<div>
-  <h2>Q: What's the difference between the Content-Type and Accept headers in a fetch request?</h2>
-  <p><strong>Answer:</strong> <code>Content-Type</code> describes the format of the data I'm sending in the request body. <code>Accept</code> tells the server what format I want back in the response. Rails' <code>respond_to</code> block reads <code>Accept</code> to decide whether to run the <code>format.html</code> or <code>format.json</code> branch — <code>Content-Type</code> alone doesn't affect that choice.</p>
-</div>
-
-<hr>
-
-<div>
-  <h2>Q: Why did adjustment always come out as 0 even though the request succeeded?</h2>
-  <p><strong>Answer:</strong> My JS sent <code>{ adjustment: 5 }</code> but the controller read <code>params[:adjustment_amount]</code> — a key mismatch. Since that key didn't exist, <code>params[:adjustment_amount]</code> was <code>nil</code>, and <code>nil.to_i</code> silently returns <code>0</code> instead of raising an error. Found it by logging raw <code>params.inspect</code> in the Rails server log rather than assuming the value was correct.</p>
-</div>
-
-<hr>
-
-<div>
-  <!-- next question goes here, same shape -->
+    <article class="info-card">
+      <h2>Q: Why did adjustment always come out as 0 even though the request succeeded?</h2>
+      <p><strong>Answer:</strong> My JS sent <code>{ adjustment: 5 }</code> but the controller read <code>params[:adjustment_amount]</code> — a key mismatch. Since that key didn't exist, <code>params[:adjustment_amount]</code> was <code>nil</code>, and <code>nil.to_i</code> silently returns <code>0</code> instead of raising an error. Found it by logging raw <code>params.inspect</code> in the Rails server log rather than assuming the value was correct.</p>
+    </article>
+  </div>
 </div>

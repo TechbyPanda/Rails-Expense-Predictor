@@ -1,26 +1,62 @@
-<h1>Recurring Expenses</h1>
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Finance overview</p>
+      <h1>Recurring Expenses</h1>
+    </div>
 
-<%= link_to "Add Expense", new_recurring_expense_path %>
+    <%= link_to "Add Expense", new_recurring_expense_path, class: "primary-button" %>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Amount</th>
-      <th>Interval (days)</th>
-      <th>Billing Date</th>
-      <th>Fixed?</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @recurring_expenses.each do |expense| %>
-      <tr>
-        <td><%= expense.name %></td>
-        <td>₹<%= expense.amount %></td>
-        <td><%= expense.interval_days %></td>
-        <td><%= expense.billing_date %></td>
-        <td><%= expense.fixed_date ? "Yes" : "No" %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <span class="summary-label">Total recurring</span>
+      <strong><%= number_to_currency(@recurring_expenses.sum(:amount), unit: "₹", precision: 2) %></strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Fixed dates</span>
+      <strong><%= @recurring_expenses.count(&:fixed_date?) %></strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Entries</span>
+      <strong><%= @recurring_expenses.count %></strong>
+    </div>
+  </div>
+
+  <% if @recurring_expenses.any? %>
+    <div class="table-wrapper">
+      <table class="expense-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Interval (days)</th>
+            <th>Billing Date</th>
+            <th>Fixed?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @recurring_expenses.each do |expense| %>
+            <tr>
+              <td><%= expense.name %></td>
+              <td><%= number_to_currency(expense.amount, unit: "₹", precision: 2) %></td>
+              <td><%= expense.interval_days %></td>
+              <td><%= expense.billing_date %></td>
+              <td>
+                <span class="status-badge <%= expense.fixed_date ? "success" : "neutral" %>">
+                  <%= expense.fixed_date ? "Yes" : "No" %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <h2>No recurring expenses yet</h2>
+      <p>Add your first expense to start tracking scheduled payments.</p>
+      <%= link_to "Create Expense", new_recurring_expense_path, class: "primary-button" %>
+    </div>
+  <% end %>
+</div>

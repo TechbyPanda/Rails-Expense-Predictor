@@ -1,32 +1,55 @@
-<div class="container">
-  <h1>Add Recurring Expense</h1>
-  
-    <%= form_with model: @recurring_expense do |f| %>
-    <div>
-        <%= f.label :name %>
-        <%= f.text_field :name %>
+<div class="page-shell form-shell">
+  <div class="panel">
+    <div class="page-header compact-header">
+      <div>
+        <p class="eyebrow">Create entry</p>
+        <h1>Add Recurring Expense</h1>
+      </div>
     </div>
 
-    <div>
-        <%= f.label :amount %>
-        <%= f.text_field :amount %>
-    </div>
-
-    <div>
-        <%= f.label :interval_days %>
-        <%= f.number_field :interval_days %>
-    </div>
-
-    <div>
-        <%= f.label :billing_date %>
-        <%= f.date_field :billing_date %>
-    </div>
-
-    <div>
-        <%= f.label :fixed_date, "Fixed schedule?" %>
-        <%= f.check_box :fixed_date %>
-    </div>
-
-    <%= f.submit "Add Expense" %>
+    <% if @recurring_expense.errors.any? %>
+      <div class="form-errors">
+        <h2><%= pluralize(@recurring_expense.errors.count, "error") %> prevented this expense from being saved:</h2>
+        <ul>
+          <% @recurring_expense.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
+
+    <%= form_with model: @recurring_expense, class: "expense-form" do |f| %>
+      <div class="form-grid">
+        <div class="field">
+          <%= f.label :name %>
+          <%= f.text_field :name, placeholder: "Rent, internet, gym..." %>
+        </div>
+
+        <div class="field">
+          <%= f.label :amount %>
+          <%= f.text_field :amount, placeholder: "1999.00" %>
+        </div>
+
+        <div class="field">
+          <%= f.label :interval_days %>
+          <%= f.number_field :interval_days, min: 1 %>
+        </div>
+
+        <div class="field">
+          <%= f.label :billing_date %>
+          <%= f.date_field :billing_date %>
+        </div>
+      </div>
+
+      <div class="checkbox-field">
+        <%= f.check_box :fixed_date %>
+        <%= f.label :fixed_date, "Fixed schedule?" %>
+      </div>
+
+      <div class="form-actions">
+        <%= link_to "Cancel", recurring_expenses_path, class: "secondary-button" %>
+        <%= f.submit "Add Expense", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
 </div>

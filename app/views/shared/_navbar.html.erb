@@ -1,0 +1,19 @@
+<nav class="app-navbar" aria-label="Main navigation">
+  <div class="nav-inner">
+    <%= link_to "Codespaces Rails", root_path, class: "brand" %>
+
+    <div class="nav-links">
+      <% nav_items = [
+        { label: "Home", path: root_path },
+        { label: "About", path: about_path },
+        { label: "Problems", path: problems_path },
+        { label: "Interview Questions", path: interview_questions_path },
+        { label: "Recurring Expenses", path: recurring_expenses_path }
+      ] %>
+
+      <% nav_items.each do |item| %>
+        <%= link_to item[:label], item[:path], class: "nav-link #{'active' if current_page?(item[:path])}" %>
+      <% end %>
+    </div>
+  </div>
+</nav>

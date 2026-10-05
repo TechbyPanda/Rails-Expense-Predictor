@@ -1,35 +1,34 @@
-<h1>Problem Solving</h1>
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Debugging journal</p>
+      <h1>Problem Solving</h1>
+    </div>
+  </div>
 
-<div>
-  <h2>Button click wasn't registering in Stimulus</h2>
-  <p><strong>What happened:</strong> Clicking the "+5" button did nothing — no console log at all.</p>
-  <p><strong>Why:</strong> I placed the &lt;button&gt; as a direct child of &lt;table&gt;, which only allows thead/tbody/tr elements. The browser silently moved it outside the table, so it fell outside my data-controller scope.</p>
-  <p><strong>Fix:</strong> Moved the button inside a &lt;tr&gt;&lt;td&gt;.</p>
-  <p><strong>Lesson:</strong> data-controller scope depends on normal HTML nesting rules — Stimulus doesn't override them.</p>
-</div>
+  <div class="info-stack">
+    <article class="info-card">
+      <h2>Button click wasn't registering in Stimulus</h2>
+      <p><strong>What happened:</strong> Clicking the "+5" button did nothing — no console log at all.</p>
+      <p><strong>Why:</strong> I placed the &lt;button&gt; as a direct child of &lt;table&gt;, which only allows thead/tbody/tr elements. The browser silently moved it outside the table, so it fell outside my data-controller scope.</p>
+      <p><strong>Fix:</strong> Moved the button inside a &lt;tr&gt;&lt;td&gt;.</p>
+      <p><strong>Lesson:</strong> data-controller scope depends on normal HTML nesting rules — Stimulus doesn't override them.</p>
+    </article>
 
-<hr>
+    <article class="info-card">
+      <h2>Stock kept increasing by 0 instead of 5</h2>
+      <p><strong>What happened:</strong> The PATCH request succeeded and the DB updated, but quantity increased by 0 every time, no matter what amount was sent.</p>
+      <p><strong>Why:</strong> My JS sent <code>{ adjustment: 5 }</code> in the fetch body, but the Rails controller read <code>params[:adjustment_amount]</code> — a different key. Since the key didn't exist, <code>params[:adjustment_amount]</code> was <code>nil</code>, and <code>nil.to_i</code> silently returns <code>0</code> instead of raising an error.</p>
+      <p><strong>Fix:</strong> Matched the key name in the fetch body to what the controller actually reads (<code>adjustment_amount</code>).</p>
+      <p><strong>Lesson:</strong> Ruby's silent type coercion (<code>nil.to_i == 0</code>) can hide a bug that would be loud in a stricter language. When a value that should error out instead "works" with a wrong result, check raw <code>params.inspect</code> in the server log before trusting any layer's math.</p>
+    </article>
 
-<div>
-  <h2>Stock kept increasing by 0 instead of 5</h2>
-  <p><strong>What happened:</strong> The PATCH request succeeded and the DB updated, but quantity increased by 0 every time, no matter what amount was sent.</p>
-  <p><strong>Why:</strong> My JS sent <code>{ adjustment: 5 }</code> in the fetch body, but the Rails controller read <code>params[:adjustment_amount]</code> — a different key. Since the key didn't exist, <code>params[:adjustment_amount]</code> was <code>nil</code>, and <code>nil.to_i</code> silently returns <code>0</code> instead of raising an error.</p>
-  <p><strong>Fix:</strong> Matched the key name in the fetch body to what the controller actually reads (<code>adjustment_amount</code>).</p>
-  <p><strong>Lesson:</strong> Ruby's silent type coercion (<code>nil.to_i == 0</code>) can hide a bug that would be loud in a stricter language. When a value that should error out instead "works" with a wrong result, check raw <code>params.inspect</code> in the server log before trusting any layer's math.</p>
-</div>
-
-<hr>
-
-<div>
-  <h2>UI showed success but the number reset on reload</h2>
-  <p><strong>What happened:</strong> Clicking "+5" appeared to work in the browser, but a page reload showed the old, unchanged quantity — as if nothing was saved (later found the DB actually was correct, just not the UI's story of it).</p>
-  <p><strong>Why:</strong> My Rails action ended with <code>redirect_to inventories_path</code>, meant for a full-page form submit. My fetch() call followed that redirect automatically, but the redirect target (<code>/inventories</code>) only supports GET, not PATCH — so fetch's real final response was a 404, which my code correctly read as failure, even though the underlying database update had already succeeded before the redirect happened.</p>
-  <p><strong>Fix:</strong> Used <code>respond_to</code> in the controller to send back a plain <code>head :ok</code> for JSON/fetch requests instead of a redirect, and added an <code>Accept: "application/json"</code> header on the JS side so Rails knew to pick that branch.</p>
-  <p><strong>Lesson:</strong> The same endpoint can (and often should) respond differently depending on how it was called. A redirect makes sense for a browser form submit but breaks a fetch() call silently. Always verify state changes via the Network tab or a real reload, not just what the UI appears to show after a click — a "successful-looking" UI can be out of sync with what the server actually did.</p>
-</div>
-
-<hr>
-
-<div>
-  <!-- next problem goes here, same shape -->
+    <article class="info-card">
+      <h2>UI showed success but the number reset on reload</h2>
+      <p><strong>What happened:</strong> Clicking "+5" appeared to work in the browser, but a page reload showed the old, unchanged quantity — as if nothing was saved (later found the DB actually was correct, just not the UI's story of it).</p>
+      <p><strong>Why:</strong> My Rails action ended with <code>redirect_to inventories_path</code>, meant for a full-page form submit. My fetch() call followed that redirect automatically, but the redirect target (<code>/inventories</code>) only supports GET, not PATCH — so fetch's real final response was a 404, which my code correctly read as failure, even though the underlying database update had already succeeded before the redirect happened.</p>
+      <p><strong>Fix:</strong> Used <code>respond_to</code> in the controller to send back a plain <code>head :ok</code> for JSON/fetch requests instead of a redirect, and added an <code>Accept: "application/json"</code> header on the JS side so Rails knew to pick that branch.</p>
+      <p><strong>Lesson:</strong> The same endpoint can (and often should) respond differently depending on how it was called. A redirect makes sense for a browser form submit but breaks a fetch() call silently. Always verify state changes via the Network tab or a real reload, not just what the UI appears to show after a click — a "successful-looking" UI can be out of sync with what the server actually did.</p>
+    </article>
+  </div>
 </div>
