@@ -1,0 +1,32 @@
+<div class="container">
+  <h1>Add Recurring Expense</h1>
+  
+    <%= form_with model: @recurring_expense do |f| %>
+    <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+    </div>
+
+    <div>
+        <%= f.label :amount %>
+        <%= f.text_field :amount %>
+    </div>
+
+    <div>
+        <%= f.label :interval_days %>
+        <%= f.number_field :interval_days %>
+    </div>
+
+    <div>
+        <%= f.label :billing_date %>
+        <%= f.date_field :billing_date %>
+    </div>
+
+    <div>
+        <%= f.label :fixed_date, "Fixed schedule?" %>
+        <%= f.check_box :fixed_date %>
+    </div>
+
+    <%= f.submit "Add Expense" %>
+    <% end %>
+</div>

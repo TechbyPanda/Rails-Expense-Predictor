@@ -19,6 +19,7 @@
     --space-md: 16px;
 
     --color-primary: #2563eb;
+    --color-primary-hover: #1e40af;
     --color-border: #ddd;
 }
 
@@ -36,4 +37,53 @@ table {
 th, td {
     padding: var(--space-sm) var(--space-md);
     border: 1px solid var(--color-border);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+form div {
+  margin-bottom: var(--space-md);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+input[type="submit"] {
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius);
+  background-color: var(--color-primary);
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+input[type="submit"]:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.container > a {
+  display: inline-block;
+  margin-bottom: var(--space-md);
 }

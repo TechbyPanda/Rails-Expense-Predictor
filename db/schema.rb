@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_114200) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_05_102625) do
   create_table "inventories", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "product_id", null: false
@@ -31,6 +31,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_114200) do
     t.string "sku", null: false
     t.datetime "updated_at", null: false
     t.index ["sku"], name: "index_products_on_sku", unique: true
+  end
+
+  create_table "recurring_expenses", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.date "billing_date", null: false
+    t.datetime "created_at", null: false
+    t.boolean "fixed_date", null: false
+    t.integer "interval_days", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "warehouses", force: :cascade do |t|
