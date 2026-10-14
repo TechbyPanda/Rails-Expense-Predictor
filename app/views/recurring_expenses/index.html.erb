@@ -33,6 +33,7 @@
             <th>Interval (days)</th>
             <th>Billing Date</th>
             <th>Fixed?</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -46,6 +47,11 @@
                 <span class="status-badge <%= expense.fixed_date ? "success" : "neutral" %>">
                   <%= expense.fixed_date ? "Yes" : "No" %>
                 </span>
+              </td>
+              <td>
+                <%= link_to "Edit", edit_recurring_expense_path(expense) %>
+                <%= button_to "Mark Paid Today", mark_paid_recurring_expense_path(expense), method: :patch, form: { data: { turbo_confirm: "Mark #{expense.name} as paid today?" } } %>
+                <%= button_to "Delete", recurring_expense_path(expense), method: :delete, form: { data: { turbo_confirm: "Delete #{expense.name}? This can't be undone." } } %>
               </td>
             </tr>
           <% end %>

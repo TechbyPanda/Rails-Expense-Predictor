@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   get "recurring_expenses/index"
-  resources :recurring_expenses, only: [:index, :new, :create]
+  resources :recurring_expenses, only: [:index, :new, :create, :edit, :update, :destroy] do
+    member do
+      patch :mark_paid
+    end
+  end
   root "recurring_expenses#index"
 
   # Static pages routes

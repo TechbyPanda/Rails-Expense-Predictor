@@ -17,6 +17,33 @@ class RecurringExpensesController < ApplicationController
     end
   end
 
+  def edit
+    @recurring_expense = RecurringExpense.find(params[:id])
+  end
+
+  def update
+    @recurring_expense = RecurringExpense.find(params[:id])
+
+    if @recurring_expense.update(recurring_expense_params)
+      redirect_to recurring_expenses_path, notice: "Expense updated!"
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def mark_paid
+    expense = RecurringExpense.find(params[:id])
+    new_date = expense.fixed_date ? expense.billing_date + 1.month : Date.today + expense.interval_days.days
+    expense.update!(billing_date: new_date)
+    redirect_to recurring_expenses_path, notice: "#{expense.name} marked paid, next billing: #{new_date}"
+  end
+
+  def destroy
+    @recurring_expense = RecurringExpense.find(params[:id])
+    @recurring_expense.destroy()
+    redirect_to recurring_expenses_path, notice: "#{@recurring_expense.name} deleted."
+  end
+
   private
 
   def recurring_expense_params
