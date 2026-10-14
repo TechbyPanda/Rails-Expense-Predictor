@@ -1,0 +1,73 @@
+<main class="page-shell summary-shell">
+  <header class="page-header summary-page-header">
+    <div>
+      <p class="eyebrow">Expense dashboard</p>
+      <h1>Monthly Summary</h1>
+      <p class="summary-intro">Scheduled recurring payments for <strong><%= @month.strftime("%B %Y") %></strong></p>
+    </div>
+    <nav class="summary-switcher" aria-label="Expense summary period">
+      <%= link_to "Monthly", monthly_summary_path(month: @month.beginning_of_month.to_s), class: "summary-switcher-link active", aria: { current: "page" } %>
+      <%= link_to "Yearly", yearly_summary_path(year: @month.year), class: "summary-switcher-link" %>
+    </nav>
+  </header>
+
+  <section class="summary-period-bar" aria-label="Choose month">
+    <%= link_to "← Previous month", monthly_summary_path(month: (@month - 1.month).beginning_of_month.to_s), class: "period-link" %>
+    <strong><%= @month.strftime("%B %Y") %></strong>
+    <%= link_to "Next month →", monthly_summary_path(month: (@month + 1.month).beginning_of_month.to_s), class: "period-link" %>
+    <% unless @month.year == Date.current.year && @month.month == Date.current.month %>
+      <%= link_to "This month", monthly_summary_path(month: Date.current.beginning_of_month.to_s), class: "period-current-link" %>
+    <% end %>
+  </section>
+
+  <section class="summary-grid summary-metrics" aria-label="Monthly totals">
+    <div class="summary-card">
+      <span class="summary-label">Scheduled total</span>
+      <strong><%= number_to_currency(@total, unit: "₹", precision: 2) %></strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Payments scheduled</span>
+      <strong><%= @rows.size %></strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Expenses due</span>
+      <strong><%= @rows.map { |row| row[:expense].id }.uniq.size %></strong>
+    </div>
+  </section>
+
+  <section class="summary-section" aria-labelledby="monthly-schedule-title">
+    <div class="summary-section-heading">
+      <div>
+        <h2 id="monthly-schedule-title">Payment schedule</h2>
+        <p>Forecast from recurring billing dates, not payment history.</p>
+      </div>
+    </div>
+    <% if @rows.any? %>
+      <div class="table-wrapper summary-table-wrapper">
+        <table class="expense-table summary-table">
+          <thead>
+            <tr><th>Expense</th><th>Due date</th><th class="summary-amount">Amount</th></tr>
+          </thead>
+          <tbody>
+            <% @rows.each do |row| %>
+              <tr>
+                <td class="summary-expense-name"><%= row[:expense].name %></td>
+                <td><%= row[:date].strftime("%b %-d, %Y") %></td>
+                <td class="summary-amount"><%= number_to_currency(row[:expense].amount, unit: "₹", precision: 2) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr><th colspan="2">Monthly scheduled total</th><th class="summary-amount"><%= number_to_currency(@total, unit: "₹", precision: 2) %></th></tr>
+          </tfoot>
+        </table>
+      </div>
+    <% else %>
+      <div class="summary-empty-state">
+        <h3>No payments scheduled</h3>
+        <p>There are no recurring expenses due in <%= @month.strftime("%B %Y") %>.</p>
+        <%= link_to "View recurring expenses", recurring_expenses_path, class: "secondary-button" %>
+      </div>
+    <% end %>
+  </section>
+</main>

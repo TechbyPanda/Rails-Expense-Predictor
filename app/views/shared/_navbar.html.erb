@@ -14,6 +14,15 @@
       <% nav_items.each do |item| %>
         <%= link_to item[:label], item[:path], class: "nav-link #{'active' if current_page?(item[:path])}" %>
       <% end %>
+
+      <% summaries_active = controller_name == "expense_summaries" %>
+      <details class="nav-menu">
+        <summary class="nav-link <%= 'active' if summaries_active %>" <%= 'aria-current="page"' if summaries_active %>>Expense summaries</summary>
+        <div class="nav-menu-panel">
+          <%= link_to "Monthly summary", monthly_summary_path, class: "nav-menu-link #{'active' if action_name == 'monthly' && summaries_active}", aria: { current: (action_name == "monthly" && summaries_active) ? "page" : nil } %>
+          <%= link_to "Yearly summary", yearly_summary_path, class: "nav-menu-link #{'active' if action_name == 'yearly' && summaries_active}", aria: { current: (action_name == "yearly" && summaries_active) ? "page" : nil } %>
+        </div>
+      </details>
     </div>
   </div>
 </nav>

@@ -1,0 +1,65 @@
+<% highest_month = @by_month.max_by { |row| row[:total] } %>
+<% highest_total = @by_month.map { |row| row[:total] }.max.to_f %>
+
+<main class="page-shell summary-shell">
+  <header class="page-header summary-page-header">
+    <div>
+      <p class="eyebrow">Expense dashboard</p>
+      <h1>Yearly Summary</h1>
+      <p class="summary-intro">Scheduled recurring payments across <strong><%= @year %></strong></p>
+    </div>
+    <nav class="summary-switcher" aria-label="Expense summary period">
+      <%= link_to "Monthly", monthly_summary_path(month: Date.new(@year, Date.current.month, 1).to_s), class: "summary-switcher-link" %>
+      <%= link_to "Yearly", yearly_summary_path(year: @year), class: "summary-switcher-link active", aria: { current: "page" } %>
+    </nav>
+  </header>
+
+  <section class="summary-period-bar" aria-label="Choose year">
+    <%= link_to "← Previous year", yearly_summary_path(year: @year - 1), class: "period-link" %>
+    <strong><%= @year %></strong>
+    <%= link_to "Next year →", yearly_summary_path(year: @year + 1), class: "period-link" %>
+    <% if @year != Date.current.year %>
+      <%= link_to "This year", yearly_summary_path(year: Date.current.year), class: "period-current-link" %>
+    <% end %>
+  </section>
+
+  <section class="summary-grid summary-metrics" aria-label="Yearly totals">
+    <div class="summary-card">
+      <span class="summary-label">Year scheduled total</span>
+      <strong><%= number_to_currency(@year_total, unit: "₹", precision: 2) %></strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Months with payments</span>
+      <strong><%= @by_month.count { |row| row[:total].positive? } %> <span class="metric-unit">of 12</span></strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Highest month</span>
+      <strong><%= highest_month[:month].strftime("%B") %></strong>
+      <span class="summary-card-detail"><%= number_to_currency(highest_month[:total], unit: "₹", precision: 2) %></span>
+    </div>
+  </section>
+
+  <section class="summary-section" aria-labelledby="yearly-breakdown-title">
+    <div class="summary-section-heading">
+      <div>
+        <h2 id="yearly-breakdown-title">Month-by-month breakdown</h2>
+        <p>Each bar shows scheduled payments. Select a month to inspect its due dates.</p>
+      </div>
+      <span class="chart-scale-label">Monthly total</span>
+    </div>
+    <div class="yearly-chart" role="list" aria-label="Scheduled expenses by month for <%= @year %>">
+      <% @by_month.each do |row| %>
+        <% bar_width = highest_total.positive? ? (row[:total].to_f / highest_total * 100).round : 0 %>
+        <%= link_to monthly_summary_path(month: row[:month].to_s), class: "yearly-chart-row", role: "listitem", aria: { label: "View #{row[:month].strftime('%B')} #{row[:month].year}: #{number_to_currency(row[:total], unit: '₹', precision: 2)} scheduled" } do %>
+          <span class="chart-month"><%= row[:month].strftime("%b") %></span>
+          <span class="chart-track"><span class="chart-fill" style="width: <%= bar_width %>%"></span></span>
+          <span class="chart-total"><%= number_to_currency(row[:total], unit: "₹", precision: 2) %></span>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="yearly-total-row">
+      <span><%= @year %> scheduled total</span>
+      <strong><%= number_to_currency(@year_total, unit: "₹", precision: 2) %></strong>
+    </div>
+  </section>
+</main>
