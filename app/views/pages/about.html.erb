@@ -1,28 +1,155 @@
-<!-- app/views/pages/about.html.erb -->
-<div style="background-color: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); line-height: 1.6;">
-  <h1 style="color: #232f3e; margin-top: 0; font-size: 32px;">Application Profile Overview</h1>
-  
-  <p style="font-size: 18px; color: #555;">
-    Welcome to the core portal configuration. This application serves as a dedicated production-environment simulator designed to test logistical layouts, relational data flows, and transactional integrity at scale.
-  </p>
-  
-  <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+<main class="about-page page-shell">
+  <section class="about-hero" aria-labelledby="about-title">
+    <div class="about-hero-copy">
+      <p class="about-kicker">A project by Palash Sharma</p>
+      <h1 id="about-title">Make room for what’s coming.</h1>
+      <p class="about-lede">A recurring-expense planner built to turn the bills you know about into a forecast you can plan around, and to make every engineering decision behind it worth understanding.</p>
+      <div class="about-hero-actions">
+        <%= link_to "Explore the expense tracker", root_path, class: "about-primary-link" %>
+        <a class="about-text-link" href="#project-model">How it works <span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
 
-  <h3 style="color: #232f3e;">System Architecture Principles</h3>
-  <p>
-    Built as a decoupled, monolithic environment, this system enforces separation of concerns across multiple system layers:
-  </p>
-  <ul>
-    <li><strong>Core Architecture:</strong> Driven entirely by an object-relational mapping database framework to guarantee clean data retrieval pipelines.</li>
-    <li><strong>Interface Architecture:</strong> Uses standard, server-rendered layouts injected with dynamic client-side runtime handlers to optimize processing speeds.</li>
-    <li><strong>Data Security Boundaries:</strong> Features transactional operation isolation patterns to safely manage shared record mutations.</li>
-  </ul>
+    <aside class="about-rhythm" aria-label="Different expense schedules represented in the app">
+      <p class="about-rhythm-label">One forecast, different rhythms</p>
+      <div class="rhythm-row">
+        <span class="rhythm-mark rhythm-monthly" aria-hidden="true"></span>
+        <span class="rhythm-name">Rent &amp; Wi-Fi</span>
+        <span class="rhythm-cycle">Monthly</span>
+      </div>
+      <div class="rhythm-row">
+        <span class="rhythm-mark rhythm-flexible" aria-hidden="true"></span>
+        <span class="rhythm-name">Gas cylinder</span>
+        <span class="rhythm-cycle">As needed</span>
+      </div>
+      <div class="rhythm-row">
+        <span class="rhythm-mark rhythm-finite" aria-hidden="true"></span>
+        <span class="rhythm-name">EMI</span>
+        <span class="rhythm-cycle">Until its end date</span>
+      </div>
+      <p class="about-rhythm-note">A schedule should describe the expense, not force the expense to fit the schedule.</p>
+    </aside>
+  </section>
 
-  <h3 style="color: #232f3e;">Environment Metrics</h3>
-  <p>
-    <strong>System State:</strong> Active Production Simulation<br>
-    <strong>Interface Paradigm:</strong> Monolithic Server-Driven HTML View Layer
-  </p>
+  <nav class="about-index" aria-label="About this project">
+    <a href="#project-model">The model</a>
+    <a href="#field-notes">Field notes</a>
+    <a href="#learning-notes">What I learned</a>
+  </nav>
 
-  <%= link_to "Return to Application Home", root_path, style: "display: inline-block; margin-top: 20px; background-color: #232f3e; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px;" %>
-</div>
+  <section class="about-section about-model" id="project-model" aria-labelledby="model-title">
+    <div class="about-section-heading">
+      <p class="about-kicker">The project</p>
+      <h2 id="model-title">A practical forecast, built from real life.</h2>
+      <p>Enter recurring costs and their actual billing patterns. The app projects what a month or year may cost, so planning savings starts with a clearer picture instead of a guess.</p>
+    </div>
+
+    <div class="model-explanation">
+      <div>
+        <h3>One record, more than one rhythm</h3>
+        <p>Rent and Wi-Fi arrive on a fixed calendar date. A gas cylinder is rebooked when it runs out, roughly every couple of months. An EMI follows a monthly schedule, but eventually stops. The model represents these real cases without building a separate system for each one.</p>
+      </div>
+      <div class="model-fields" aria-label="Recurring expense scheduling fields">
+        <span><code>fixed_date</code><small>calendar-based bills</small></span>
+        <span><code>interval_days</code><small>flexible intervals</small></span>
+        <span><code>end_date</code><small>finite schedules</small></span>
+        <span><code>one_time</code><small>single occurrences</small></span>
+      </div>
+    </div>
+    <p class="about-principle"><span>Design principle</span> Accurate enough to help with a real decision; simple enough to keep evolving.</p>
+  </section>
+
+  <section class="about-section about-field-notes" id="field-notes" aria-labelledby="field-notes-title">
+    <div class="about-section-heading">
+      <p class="about-kicker">Field notes</p>
+      <h2 id="field-notes-title">The bugs that made the app better.</h2>
+      <p>Three debugging sessions that changed how I think about the browser, the request, and the data in between.</p>
+    </div>
+
+    <div class="field-note-list">
+      <article class="field-note">
+        <span class="field-note-number" aria-hidden="true">01</span>
+        <div>
+          <h3>The button that went missing</h3>
+          <p class="field-note-summary">A table click did nothing. No error, no console message.</p>
+          <p>HTML tables only accept specific direct children. The browser parser moved my misplaced button outside the table, and therefore outside its Stimulus controller’s scope. Putting it inside a valid <code>&lt;tr&gt;&lt;td&gt;</code> fixed the interaction.</p>
+          <p class="field-note-takeaway">Takeaway: controller scope follows the DOM the browser actually built, not the markup I thought I wrote.</p>
+        </div>
+      </article>
+
+      <article class="field-note">
+        <span class="field-note-number" aria-hidden="true">02</span>
+        <div>
+          <h3>The successful update that looked like a failure</h3>
+          <p class="field-note-summary">A stock update saved, but <code>fetch()</code> ended at a 404.</p>
+          <p>The Rails action redirected as if it were handling a full-page form. <code>fetch()</code> followed that redirect with the original request method, landing on a route that did not support it. The database had already been updated, but the response made the UI report failure.</p>
+          <p class="field-note-takeaway">Takeaway: use <code>respond_to</code> to return a response that fits the caller. A form can redirect; a JSON request can return <code>head :ok</code>.</p>
+        </div>
+      </article>
+
+      <article class="field-note">
+        <span class="field-note-number" aria-hidden="true">03</span>
+        <div>
+          <h3>The value that quietly became zero</h3>
+          <p class="field-note-summary">A quantity changed by 0 even though the request succeeded.</p>
+          <p>JavaScript sent <code>adjustment</code>, while the controller read <code>adjustment_amount</code>. The missing value became <code>nil</code>, and Ruby’s <code>nil.to_i</code> returned 0 instead of raising an error. Comparing the raw request parameters exposed the mismatch.</p>
+          <p class="field-note-takeaway">Takeaway: when a value is wrong but nothing crashes, inspect the request before trusting the math.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="about-section about-learning" id="learning-notes" aria-labelledby="learning-title">
+    <div class="about-section-heading">
+      <p class="about-kicker">Learning notes</p>
+      <h2 id="learning-title">The ideas behind the implementation.</h2>
+      <p>Short answers to the Rails and Hotwire questions that came up while building this project.</p>
+    </div>
+
+    <div class="learning-grid">
+      <details class="learning-note">
+        <summary>How does Stimulus connect a JavaScript file to an HTML element?</summary>
+        <p>Stimulus derives an identifier from the controller filename: <code>adjuster_controller.js</code> becomes <code>adjuster</code>. It finds matching <code>data-controller="adjuster"</code> elements and attaches an instance to each. A mismatched name means no matching controller is found.</p>
+      </details>
+      <details class="learning-note">
+        <summary>What is the difference between <code>connect()</code> and an action method?</summary>
+        <p><code>connect()</code> runs automatically when the controller’s element enters the DOM. An action method such as <code>add()</code> runs in response to an event wired with an attribute like <code>data-action="click-&gt;adjuster#add"</code>.</p>
+      </details>
+      <details class="learning-note">
+        <summary>When should I use a singular or plural Stimulus target?</summary>
+        <p><code>this.quantityTarget</code> accesses the first matching element; <code>this.quantityTargets</code> returns all matches. With shared controllers, plural targets or a narrower per-row controller scope help avoid updating the wrong row.</p>
+      </details>
+      <details class="learning-note">
+        <summary>What does Stimulus scope mean?</summary>
+        <p>Scope is the DOM subtree under the element carrying <code>data-controller</code>. Targets and actions are found only within that subtree. Giving each table row its own controller instance keeps each button working on its own row.</p>
+      </details>
+      <details class="learning-note">
+        <summary>Why use named route helpers instead of hardcoded URLs?</summary>
+        <p>A literal <code>href="/about"</code> is a string Rails cannot track. A helper such as <code>about_path</code> comes from the route and stays aligned if its URL changes, avoiding stale links.</p>
+      </details>
+      <details class="learning-note">
+        <summary>When is looping over view data worth it?</summary>
+        <p>Loops help when data changes independently, such as inventory rows from the database. A small, stable, human-decided list may be clearer written plainly. DRY is about preventing drift and repetition at scale, not adding indirection everywhere.</p>
+      </details>
+      <details class="learning-note">
+        <summary>What do <code>Content-Type</code> and <code>Accept</code> mean in a request?</summary>
+        <p><code>Content-Type</code> describes the format of the request body. <code>Accept</code> describes the response format the caller wants. Rails can use <code>Accept</code> to select the matching <code>respond_to</code> branch.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="about-capabilities" aria-labelledby="capabilities-title">
+    <div>
+      <p class="about-kicker">Built along the way</p>
+      <h2 id="capabilities-title">A little bit of the whole Rails stack.</h2>
+    </div>
+    <ul>
+      <li>Rails MVC, RESTful routes, strong parameters, and response formats</li>
+      <li>ActiveRecord modeling and business logic kept close to the data</li>
+      <li>Hotwire and Stimulus controllers, targets, scope, and Turbo confirmations</li>
+      <li>Debugging with browser network tools and server logs</li>
+      <li>CSS custom properties for a consistent, maintainable visual system</li>
+      <li>Practical data modeling without over-engineering the forecast</li>
+    </ul>
+  </section>
+</main>
