@@ -32,7 +32,9 @@
             <th>Amount</th>
             <th>Interval (days)</th>
             <th>Billing Date</th>
+            <th>End Date</th>
             <th>Fixed?</th>
+            <th>One-time?</th>
             <th class="actions-heading">Actions</th>
           </tr>
         </thead>
@@ -43,9 +45,15 @@
               <td><%= number_to_currency(expense.amount, unit: "₹", precision: 2) %></td>
               <td><%= expense.interval_days %></td>
               <td><%= expense.billing_date %></td>
+              <td><%= expense.end_date %></td>
               <td>
                 <span class="status-badge <%= expense.fixed_date ? "success" : "neutral" %>">
                   <%= expense.fixed_date ? "Yes" : "No" %>
+                </span>
+              </td>
+              <td>
+                <span class="status-badge <%= expense.one_time ? "success" : "neutral" %>">
+                  <%= expense.one_time ? "Yes" : "No" %>
                 </span>
               </td>
               <td class="actions-cell">

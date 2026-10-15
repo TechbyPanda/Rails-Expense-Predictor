@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_05_102625) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_062009) do
   create_table "inventories", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "product_id", null: false
@@ -37,9 +37,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_102625) do
     t.decimal "amount", precision: 10, scale: 2, null: false
     t.date "billing_date", null: false
     t.datetime "created_at", null: false
+    t.date "end_date"
     t.boolean "fixed_date", null: false
     t.integer "interval_days", null: false
     t.string "name", null: false
+    t.boolean "one_time", default: false
     t.datetime "updated_at", null: false
   end
 

@@ -76,6 +76,6 @@ class RecurringExpensesController < ApplicationController
   private
 
   def recurring_expense_params
-    params.require(:recurring_expense).permit(:name, :amount, :interval_days, :billing_date, :fixed_date)
+    params.require(:recurring_expense).permit(:name, :amount, :interval_days, :billing_date, :fixed_date, :one_time, :end_date)
   end
 end
